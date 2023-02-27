@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var app = express();
 var url = String(process.env.HOSTNAME).split("-");
 const totalVotersRaw = require('./totalVotersRaw')
+const totalVotersBatch = require('./totalVotersBatch')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -48,9 +49,8 @@ app.get("/update", function (req, res) {
 });
 
 app.get("/analytics/voters/:region", async function (req, res) {
-  // await new Promise((resolve) => setTimeout(resolve, 2500));
-  // res.send('<h1>Total Voters in Mumbai</h1><p>All good people voted.There are 45,000 total voters from Mumbai<br /><br />');
-  await totalVotersRaw(req, res)
+  const voters = await totalVotersBatch(req.params.region);
+  res.status(200).send(voters);
 });
 
 // Listen on port 8080
